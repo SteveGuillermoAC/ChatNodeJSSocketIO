@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8"/>
+        <title>Chat Page with Socket.io</title>
+        <style>
+            body
+            {
+                background-color: cornflowerblue;
+                color:black;
+                font-size: 40px;
+                text-align: center;
+            }
+            #form_envio input
+            {
+                font-size: 20px;
+                padding: 5px 10px;
+
+            }
+
+        </style>
+    </head>
+    <body>
+        <form id="form_envio">
+            <input id="datos" name="" placeholder="Escribe aqui el mensaje..." required/>
+            <input type="submit" value="Enviar"/>
+
+        </form>
+        <div id="recibir"> </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <script src="http://127.0.0.1:3000/socket.io/socket.io.js"></script>
+
+        <script>
+
+           var webSocket = io.connect("http://127.0.0.1:3000");
+
+            $(document).on("ready", inicio);
+
+            function inicio()
+            {
+                $("#form_envio").on("submit",enviar_datos);
+                webSocket.on("datos_servidor", recibir_datos);
+
+            }
+
+            function enviar_datos(e)
+            {
+                e.preventDefault();
+                var datos= $("#form_envio").find("#datos").val();
+                webSocket.emit("datos_cliente", datos);
+
+            }
+
+            function recibir_datos(data)
+            {
+                $("#recibir").append(data+'<br/>');
+                $("#form_envio").find("#datos").val("");
+            }
+
+
+        </script>
+    </body>
+</html>
